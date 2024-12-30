@@ -1,0 +1,17 @@
+/* I used chat gpt to create this style*/
+
+.custom-pagination .MuiPaginationItem-root {
+  color: #000 !important; /* Change text color */
+  background-color: #fff !important; /* Set background color */
+  border: 1px solid #ccc; /* Border color */
+}
+
+.custom-pagination .MuiPaginationItem-root:hover {
+  background-color: #1976d2 !important; /* Hover background color */
+  color: #fff !important; /* Hover text color */
+}
+
+.custom-pagination .MuiPaginationItem-root.Mui-selected {
+  background-color: #1976d2 !important; /* Selected button background color */
+  color: #fff !important; /* Selected button text color */
+}
