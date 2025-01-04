@@ -1,9 +1,6 @@
 export const getMovies = ({queryKey}) => {
-  const [, sortByPart, pagePart] = queryKey; 
-  const { sortBy } = sortByPart;
-  const { page } = pagePart;
   return fetch(
-    `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&include_adult=true&include_video=false&page=${page}&sort_by=${sortBy}`
+    `http://localhost:8080/api/movies`
   ).then((response) => {
     if (!response.ok) {
       return response.json().then((error) => {
@@ -16,6 +13,25 @@ export const getMovies = ({queryKey}) => {
       throw error
   });
 };
+
+// export const getMovies = ({queryKey}) => {
+//   const [, sortByPart, pagePart] = queryKey; 
+//   const { sortBy } = sortByPart;
+//   const { page } = pagePart;
+//   return fetch(
+//     `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&include_adult=true&include_video=false&page=${page}&sort_by=${sortBy}`
+//   ).then((response) => {
+//     if (!response.ok) {
+//       return response.json().then((error) => {
+//         throw new Error(error.status_message || "Something went wrong");
+//       });
+//     }
+//     return response.json();
+//   })
+//   .catch((error) => {
+//       throw error
+//   });
+// };
 
 export const getPopularPeople = () => {
   return fetch(
