@@ -17,13 +17,24 @@ router.post('/', asyncHandler(async (req, res) => {
             return res.status(400).json({ success: false, msg: 'Username and password are required.' });
         }
         if (req.query.action === 'register') {
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // matches the regex in userModel.js 
+            if (!passwordRegex.test(req.body.password)) {
+                return res.status(400).json({
+                    success: false,
+                    msg: "Password must be at least 8 characters long, include a letter, a number, and a special character." // Tell them why it failed rather than just "Internal Server Error"
+                });
+            }
             await registerUser(req, res);
         } else {
             await authenticateUser(req, res);
         }
     } catch (error) {
-        // Log the error and return a generic error message
-        console.error(error);
+        console.error('Error occurred:', error);
+        if (error.name === 'ValidationError') {
+            const errorMessage = error.errors?.password?.message || 'Validation failed.';
+            return res.status(400).json({ success: false, msg: errorMessage });
+        }
+
         res.status(500).json({ success: false, msg: 'Internal server error.' });
     }
 }));

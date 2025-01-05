@@ -1,42 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const RegisterPage = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!email || !password) {
-      setError("Email and password must not be empty.");
+    if (!username || !password) {
+      setError("Username and password must not be empty.");
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("User created:", user);
-        setSuccess(true);
-        setError(null);
-      })
-      .catch((error) => {
-        console.error("Signup error:", error.code, error.message);
-        setError(error.message);
-        setSuccess(false);
-      });
-  };
-
-  useEffect(() => {
-    if (success) {
-      navigate("/");
+    try {
+      console.log('Sending request to:', 'http://localhost:8080/api/users?action=register');
+      await axios.post('http://localhost:8080/api/users?action=register', { username, password });
+      setSuccess(true);
+      setError(null);
+      navigate("/login");
+    } catch (err) {
+      console.error("Signup error:", err);
+      setError(err.response ? err.response.data.msg : 'An error occurred');
+      setSuccess(false);
     }
-  }, [success, navigate]);
+  };
 
   return (
     <div style={{ maxWidth: "400px", margin: "auto", textAlign: "center" }}>
@@ -44,11 +36,11 @@ const RegisterPage = () => {
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "15px" }}>
           <label>
-            Email:
+            Username:
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               style={{
                 width: "100%",
                 padding: "8px",
@@ -95,3 +87,4 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
+

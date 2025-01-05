@@ -1,36 +1,34 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import axios from 'axios';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (event) => {
+  const  handleLogin = async (event) => {
     event.preventDefault();
 
-    if (!email || !password) {
-      setError("Email and password must not be empty.");
+    if (!username || !password) {
+      setError("Username and password must not be empty.");
       return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("User logged in:", user);
-        setSuccess(true);
-        setError(null);
-        navigate("/home");
-      })
-      .catch((error) => {
-        console.error("Login error:", error.code, error.message);
-        setError(error.message);
-        setSuccess(false);
-      });
+    try {
+      const response = await axios.post('http://localhost:8080/api/users', { username, password });
+      const { token } = response.data; 
+      localStorage.setItem('token', token);
+      setSuccess(true);
+      setError(null);
+      navigate("/home");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.response ? err.response.data.msg : 'An error occurred');
+      setSuccess(false);
+    }
   };
 
   return (
@@ -39,11 +37,11 @@ const LoginPage = () => {
       <form onSubmit={handleLogin}>
         <div style={{ marginBottom: "15px" }}>
           <label>
-            Email:
+            Username:
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               style={{
                 width: "100%",
                 padding: "8px",
@@ -106,3 +104,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

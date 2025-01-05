@@ -35,6 +35,22 @@ export const getMovie = (args) => {
  });
 };
 
+export const getUsers = () => {
+  return fetch(
+    `http://localhost:8080/api/users`
+  ).then((response) => {
+    if (!response.ok) {
+      return response.json().then((error) => {
+        throw new Error(error.status_message || "Something went wrong");
+      });
+    }
+    return response.json();
+  })
+  .catch((error) => {
+      throw error
+  });
+};
+
 // export const getMovies = ({queryKey}) => {
 //   const [, sortByPart, pagePart] = queryKey; 
 //   const { sortBy } = sortByPart;
