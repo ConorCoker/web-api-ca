@@ -3,7 +3,8 @@ import asyncHandler from 'express-async-handler';
 import express from 'express';
 import {
     getUpcomingMovies,
-    getGenres
+    getGenres,
+    getMovieReviews
   } from '../tmdb-api';
   
 const router = express.Router();
@@ -49,5 +50,17 @@ router.get('/tmdb/genres', asyncHandler(async (req, res) => {
     const genres = await getGenres();
     res.status(200).json(genres);
 }));
+
+router.get('/:id/reviews', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const reviews = await getMovieReviews({ queryKey: [null, { id }] });
+      res.status(200).json(reviews); // Return the reviews as JSON
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      res.status(500).json({ message: 'Error fetching reviews' });
+    }
+  }));
 
 export default router;
