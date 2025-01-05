@@ -4,7 +4,8 @@ import express from 'express';
 import {
     getUpcomingMovies,
     getGenres,
-    getMovieReviews
+    getMovieReviews,
+    getMovieImages
   } from '../tmdb-api';
   
 const router = express.Router();
@@ -60,6 +61,18 @@ router.get('/:id/reviews', asyncHandler(async (req, res) => {
     } catch (error) {
       console.error('Error fetching reviews:', error);
       res.status(500).json({ message: 'Error fetching reviews' });
+    }
+  }));
+
+  router.get('/:id/images', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+      const images = await getMovieImages({ queryKey: [null, { id }] });
+      res.status(200).json(images);  // Send the images as the response
+    } catch (error) {
+      console.error('Error fetching movie images:', error);
+      res.status(500).json({ message: 'Error fetching movie images' });
     }
   }));
 

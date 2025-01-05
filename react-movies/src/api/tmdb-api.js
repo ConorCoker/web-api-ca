@@ -309,7 +309,7 @@ export const getTopRated = () => {
     const [, idPart] = queryKey;
     const { id } = idPart;
     return fetch(
-      `https://api.themoviedb.org/3/movie/${id}/images?api_key=${process.env.REACT_APP_TMDB_KEY}`
+      `http://localhost:8080/api/movies/${id}/images`
     ).then( (response) => {
       if (!response.ok) {
         return response.json().then((error) => {
